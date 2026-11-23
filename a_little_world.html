@@ -1,0 +1,1909 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>A Little World — Botanical Sanctuary</title>
+
+  <!-- Google Fonts: Cormorant Garamond (Romantic Serif) & Plus Jakarta Sans (Clean Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rosePetal: {
+              50: '#fdf8f8',
+              100: '#fdf2f3',
+              200: '#f8e1e4',
+              300: '#f0c4cb',
+              400: '#e39ca8',
+              500: '#d98290',
+              600: '#b55d6d',
+              700: '#8f4352',
+              800: '#6e333f',
+              900: '#4d232c',
+            },
+            sageLeaf: {
+              50: '#f4f7f5',
+              100: '#e5ece8',
+              200: '#cad9d0',
+              300: '#a3beae',
+              400: '#7fa18d',
+              500: '#6b8e78',
+              600: '#4a6b56',
+              700: '#395443',
+              800: '#2d4235',
+              900: '#233329',
+            },
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ==========================================================================
+       CUSTOM BOTANICAL STYLES, ANIMATIONS & GLASSMORPHISM
+       ========================================================================== */
+    :root {
+      --bg-blush: #fdf6f6;
+      --bg-petal: #f8e1e4;
+      --rose-primary: #d98290;
+      --rose-deep: #b55d6d;
+      --sage-primary: #6b8e78;
+      --sage-deep: #4a6b56;
+      --text-ink: #3d2c30;
+      --text-muted: #6e595e;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--text-ink);
+      background: linear-gradient(165deg, #fdf8f8 0%, #f9e8eb 38%, #f3ece9 72%, #eef4f0 100%);
+      background-attachment: fixed;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    h1, h2, h3, h4, .font-serif-display {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    /* Glassmorphic Card Styling */
+    .botanical-card {
+      background: rgba(255, 252, 252, 0.68);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow:
+        0 10px 30px -10px rgba(181, 93, 109, 0.12),
+        0 4px 12px -2px rgba(74, 107, 86, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                  border-color 0.35s ease;
+    }
+
+    .botanical-card:hover {
+      border-color: rgba(217, 130, 144, 0.45);
+      box-shadow:
+        0 18px 38px -12px rgba(181, 93, 109, 0.18),
+        0 6px 16px -4px rgba(74, 107, 86, 0.09),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    /* Sticky Glass Navigation */
+    .botanical-nav {
+      background: rgba(253, 248, 248, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(217, 130, 144, 0.2);
+    }
+
+    /* Ambient Canvas Layer */
+    #meadow-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Introductory Screen Animations */
+    #intro-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: radial-gradient(circle at 50% 45%, #fff9fa 0%, #fae6e9 52%, #f1dce0 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+                  visibility 1.1s ease;
+    }
+
+    #intro-screen.entered {
+      opacity: 0;
+      transform: scale(1.12);
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Floating & Rotating 3D-Styled Botanical Rose */
+    @keyframes roseFloat {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-10px) rotate(2deg);
+      }
+    }
+
+    @keyframes slowSpinClockwise {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes slowSpinCounter {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    @keyframes auraPulse {
+      0%, 100% {
+        transform: scale(0.96);
+        opacity: 0.55;
+      }
+      50% {
+        transform: scale(1.06);
+        opacity: 0.85;
+      }
+    }
+
+    .rose-portal-btn {
+      position: relative;
+      cursor: pointer;
+      animation: roseFloat 5.5s ease-in-out infinite;
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .rose-portal-btn:hover,
+    .rose-portal-btn:focus-visible {
+      transform: scale(1.07);
+      outline: none;
+    }
+
+    .rose-portal-btn:focus-visible .rose-focus-ring {
+      opacity: 1;
+      transform: scale(1.12);
+    }
+
+    .rose-outer-whorl {
+      transform-origin: 150px 150px;
+      animation: slowSpinClockwise 46s linear infinite;
+      transition: transform 0.8s ease;
+    }
+
+    .rose-mid-whorl {
+      transform-origin: 150px 150px;
+      animation: slowSpinCounter 34s linear infinite;
+    }
+
+    .rose-inner-whorl {
+      transform-origin: 150px 150px;
+      animation: slowSpinClockwise 24s linear infinite;
+    }
+
+    .rose-portal-btn:hover .rose-outer-whorl {
+      animation-duration: 18s;
+    }
+
+    .rose-portal-btn:hover .rose-mid-whorl {
+      animation-duration: 14s;
+    }
+
+    .rose-aura {
+      animation: auraPulse 4.5s ease-in-out infinite;
+    }
+
+    /* Main Content Entrance Reveal */
+    #main-world {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 1s ease 0.25s, transform 1s cubic-bezier(0.22, 1, 0.36, 1) 0.25s;
+    }
+
+    #main-world.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Section Scroll Reveal */
+    .reveal-section {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.75s ease, transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal-section.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Botanical Stationery Paper Texture for Secret Letter */
+    .stationery-paper {
+      background-color: #fffbfa;
+      background-image:
+        radial-gradient(rgba(217, 130, 144, 0.14) 1px, transparent 0),
+        linear-gradient(to bottom, rgba(248, 225, 228, 0.25) 0%, rgba(255, 252, 252, 0.9) 100%);
+      background-size: 22px 22px, 100% 100%;
+    }
+
+    /* Custom Subtle Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #fdf6f6;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #e3b3bc;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #c77b89;
+    }
+
+    /* Reduced Motion Support */
+    @media (prefers-reduced-motion: reduce) {
+      .rose-portal-btn,
+      .rose-outer-whorl,
+      .rose-mid-whorl,
+      .rose-inner-whorl,
+      .rose-aura {
+        animation: none !important;
+      }
+      .reveal-section,
+      #intro-screen,
+      #main-world {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-rosePetal-200 selection:text-rosePetal-900">
+
+  <!-- ========================================================================
+       AMBIENT FLOWER MEADOW & FLOATING PETALS CANVAS
+       ======================================================================== -->
+  <canvas id="meadow-canvas" aria-hidden="true"></canvas>
+
+  <!-- ========================================================================
+       INTRODUCTORY SCREEN: INTERACTIVE ROTATING BOTANICAL ROSE PORTAL
+       ======================================================================== -->
+  <section id="intro-screen" aria-label="Welcome to A Little World">
+    <!-- Decorative corner botanical sprigs -->
+    <div class="pointer-events-none absolute top-6 left-6 opacity-35 text-sageLeaf-600 hidden sm:block">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <path d="M10 90 C30 60, 50 35, 88 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M35 62 C22 55, 18 42, 28 36 C38 42, 40 52, 35 62 Z" fill="currentColor" fill-opacity="0.35"/>
+        <path d="M55 42 C68 46, 78 38, 74 28 C64 28, 56 34, 55 42 Z" fill="currentColor" fill-opacity="0.35"/>
+        <path d="M22 76 C35 80, 44 74, 40 65 C31 64, 24 69, 22 76 Z" fill="currentColor" fill-opacity="0.25"/>
+      </svg>
+    </div>
+
+    <div class="pointer-events-none absolute bottom-6 right-6 opacity-35 text-sageLeaf-600 rotate-180 hidden sm:block">
+      <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
+        <path d="M10 90 C30 60, 50 35, 88 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M35 62 C22 55, 18 42, 28 36 C38 42, 40 52, 35 62 Z" fill="currentColor" fill-opacity="0.35"/>
+        <path d="M55 42 C68 46, 78 38, 74 28 C64 28, 56 34, 55 42 Z" fill="currentColor" fill-opacity="0.35"/>
+      </svg>
+    </div>
+
+    <div class="relative flex flex-col items-center px-6 text-center max-w-md">
+      <p class="text-xs uppercase tracking-[0.28em] text-sageLeaf-600 font-medium mb-4">
+        A Quiet Botanical Corner
+      </p>
+
+      <!-- Interactive Rotating Rose Button -->
+      <button
+        id="enter-rose-btn"
+        type="button"
+        aria-label="Enter A Little World"
+        class="rose-portal-btn group relative flex items-center justify-center w-64 h-64 sm:w-72 sm:h-72 rounded-full"
+      >
+        <!-- Soft glowing halo -->
+        <div class="rose-aura absolute inset-3 rounded-full bg-gradient-to-tr from-rosePetal-300/45 via-rosePetal-200/35 to-sageLeaf-200/40 blur-xl"></div>
+
+        <!-- Focus / Hover dashed botanical ring -->
+        <div class="rose-focus-ring absolute inset-1 rounded-full border border-dashed border-rosePetal-400/60 opacity-40 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"></div>
+
+        <!-- Layered 3D-Shaded Realistic Botanical Rose SVG -->
+        <svg viewBox="0 0 300 300" class="w-full h-full drop-shadow-[0_18px_28px_rgba(143,67,82,0.24)]" role="img" aria-hidden="true">
+          <defs>
+            <!-- Rich multi-stop petal gradients for 3D depth -->
+            <radialGradient id="petalOuterGrad" cx="35%" cy="25%" r="75%">
+              <stop offset="0%" stop-color="#fbe6e9" />
+              <stop offset="48%" stop-color="#e59aa7" />
+              <stop offset="85%" stop-color="#c26778" />
+              <stop offset="100%" stop-color="#9c4858" />
+            </radialGradient>
+
+            <radialGradient id="petalMidGrad" cx="40%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#f8d2d8" />
+              <stop offset="55%" stop-color="#d87b8b" />
+              <stop offset="100%" stop-color="#a84e5f" />
+            </radialGradient>
+
+            <radialGradient id="petalInnerGrad" cx="45%" cy="35%" r="68%">
+              <stop offset="0%" stop-color="#f2b8c2" />
+              <stop offset="60%" stop-color="#c56375" />
+              <stop offset="100%" stop-color="#873746" />
+            </radialGradient>
+
+            <radialGradient id="roseCoreGrad" cx="50%" cy="45%" r="60%">
+              <stop offset="0%" stop-color="#e895a4" />
+              <stop offset="55%" stop-color="#9e4354" />
+              <stop offset="100%" stop-color="#6b2634" />
+            </radialGradient>
+
+            <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#8eb09b" />
+              <stop offset="60%" stop-color="#5d806b" />
+              <stop offset="100%" stop-color="#3f5c4b" />
+            </linearGradient>
+
+            <filter id="petalShadow" x="-15%" y="-15%" width="130%" height="130%">
+              <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#6e2836" flood-opacity="0.24" />
+            </filter>
+          </defs>
+
+          <!-- Subtle Sage Sepal Leaves Beneath Rose -->
+          <g opacity="0.92">
+            <path d="M150 150 C115 95, 78 82, 58 98 C76 118, 108 138, 150 150 Z" fill="url(#leafGrad)" />
+            <path d="M150 150 C205 115, 224 80, 212 60 C190 76, 168 108, 150 150 Z" fill="url(#leafGrad)" />
+            <path d="M150 150 C185 205, 222 218, 242 202 C224 182, 192 162, 150 150 Z" fill="url(#leafGrad)" />
+            <path d="M150 150 C95 185, 76 220, 88 240 C110 224, 132 192, 150 150 Z" fill="url(#leafGrad)" />
+          </g>
+
+          <!-- Outer Whorl of 7 Broad Sculpted Petals -->
+          <g class="rose-outer-whorl" filter="url(#petalShadow)">
+            <g transform="rotate(0 150 150)">
+              <path d="M150 150 C102 125, 92 62, 150 48 C208 62, 198 125, 150 150 Z" fill="url(#petalOuterGrad)" />
+              <path d="M118 66 C135 52, 165 52, 182 66" stroke="#fff5f7" stroke-width="1.3" stroke-opacity="0.65" fill="none" stroke-linecap="round" />
+            </g>
+            <g transform="rotate(51.4 150 150)">
+              <path d="M150 150 C102 125, 92 62, 150 48 C208 62, 198 125, 150 150 Z" fill="url(#petalOuterGrad)" />
+              <path d="M118 66 C135 52, 165 52, 182 66" stroke="#fff5f7" stroke-width="1.3" stroke-opacity="0.6" fill="none" stroke-linecap="round" />
+            </g>
+            <g transform="rotate(102.8 150 150)">
+              <path d="M150 150 C102 125, 92 62, 150 48 C208 62, 198 125, 150 150 Z" fill="url(#petalOuterGrad)" />
+              <path d="M118 66 C135 52, 165 52, 182 66" stroke="#fff5f7" stroke-width="1.3" stroke-opacity="0.6" fill="none" stroke-linecap="round" />
+            </g>
+            <g transform="rotate(154.2 150 150)">
+              <path d="M150 150 C102 125, 92 62, 150 48 C208 62, 198 125, 150 150 Z" fill="url(#petalOuterGrad)" />
+              <path d="M118 66 C135 52, 165 52, 182 66" stroke="#fff5f7" stroke-width="1.3" stroke-opacity="0.6" fill="none" stroke-linecap="round" />
+            </g>
+            <g transform="rotate(205.6 150 150)">
+              <path d="M150 150 C102 125, 92 62, 150 48 C208 62, 198 125, 150 150 Z" fill="url(#petalOuterGrad)" />
+              <path d="M118 66 C135 52, 165 52, 182 66" stroke="#fff5f7" stroke-width="1.3" stroke-opacity="0.6" fill="none" stroke-linecap="round" />
+            </g>
+            <g transform="rotate(257 150 150)">
+              <path d="M150 150 C102 125, 92 62, 150 48 C208 62, 198 125, 150 150 Z" fill="url(#petalOuterGrad)" />
+              <path d="M118 66 C135 52, 165 52, 182 66" stroke="#fff5f7" stroke-width="1.3" stroke-opacity="0.6" fill="none" stroke-linecap="round" />
+            </g>
+            <g transform="rotate(308.4 150 150)">
+              <path d="M150 150 C102 125, 92 62, 150 48 C208 62, 198 125, 150 150 Z" fill="url(#petalOuterGrad)" />
+              <path d="M118 66 C135 52, 165 52, 182 66" stroke="#fff5f7" stroke-width="1.3" stroke-opacity="0.6" fill="none" stroke-linecap="round" />
+            </g>
+          </g>
+
+          <!-- Middle Whorl of 6 Cupped Petals -->
+          <g class="rose-mid-whorl" filter="url(#petalShadow)">
+            <g transform="rotate(15 150 150)">
+              <path d="M150 150 C112 130, 105 80, 150 68 C195 80, 188 130, 150 150 Z" fill="url(#petalMidGrad)" />
+              <path d="M124 84 C138 72, 162 72, 176 84" stroke="#ffeef1" stroke-width="1.2" stroke-opacity="0.65" fill="none" stroke-linecap="round" />
+            </g>
+            <g transform="rotate(75 150 150)">
+              <path d="M150 150 C112 130, 105 80, 150 68 C195 80, 188 130, 150 150 Z" fill="url(#petalMidGrad)" />
+              <path d="M124 84 C138 72, 162 72, 176 84" stroke="#ffeef1" stroke-width="1.2" stroke-opacity="0.65" fill="none" stroke-linecap="round" />
+            </g>
+            <g transform="rotate(135 150 150)">
+              <path d="M150 150 C112 130, 105 80, 150 68 C195 80, 188 130, 150 150 Z" fill="url(#petalMidGrad)" />
+              <path d="M124 84 C138 72, 162 72, 176 84" stroke="#ffeef1" stroke-width="1.2" stroke-opacity="0.65" fill="none" stroke-linecap="round" />
+            </g>
+            <g transform="rotate(195 150 150)">
+              <path d="M150 150 C112 130, 105 80, 150 68 C195 80, 188 130, 150 150 Z" fill="url(#petalMidGrad)" />
+              <path d="M124 84 C138 72, 162 72, 176 84" stroke="#ffeef1" stroke-width="1.2" stroke-opacity="0.65" fill="none" stroke-linecap="round" />
+            </g>
+            <g transform="rotate(255 150 150)">
+              <path d="M150 150 C112 130, 105 80, 150 68 C195 80, 188 130, 150 150 Z" fill="url(#petalMidGrad)" />
+              <path d="M124 84 C138 72, 162 72, 176 84" stroke="#ffeef1" stroke-width="1.2" stroke-opacity="0.65" fill="none" stroke-linecap="round" />
+            </g>
+            <g transform="rotate(315 150 150)">
+              <path d="M150 150 C112 130, 105 80, 150 68 C195 80, 188 130, 150 150 Z" fill="url(#petalMidGrad)" />
+              <path d="M124 84 C138 72, 162 72, 176 84" stroke="#ffeef1" stroke-width="1.2" stroke-opacity="0.65" fill="none" stroke-linecap="round" />
+            </g>
+          </g>
+
+          <!-- Inner Spiral Whorl of 5 Folded Petals -->
+          <g class="rose-inner-whorl" filter="url(#petalShadow)">
+            <g transform="rotate(0 150 150)">
+              <path d="M150 150 C122 136, 118 98, 150 90 C182 98, 178 136, 150 150 Z" fill="url(#petalInnerGrad)" />
+            </g>
+            <g transform="rotate(72 150 150)">
+              <path d="M150 150 C122 136, 118 98, 150 90 C182 98, 178 136, 150 150 Z" fill="url(#petalInnerGrad)" />
+            </g>
+            <g transform="rotate(144 150 150)">
+              <path d="M150 150 C122 136, 118 98, 150 90 C182 98, 178 136, 150 150 Z" fill="url(#petalInnerGrad)" />
+            </g>
+            <g transform="rotate(216 150 150)">
+              <path d="M150 150 C122 136, 118 98, 150 90 C182 98, 178 136, 150 150 Z" fill="url(#petalInnerGrad)" />
+            </g>
+            <g transform="rotate(288 150 150)">
+              <path d="M150 150 C122 136, 118 98, 150 90 C182 98, 178 136, 150 150 Z" fill="url(#petalInnerGrad)" />
+            </g>
+
+            <!-- Velvet Rose Heart Spiral -->
+            <circle cx="150" cy="150" r="24" fill="url(#roseCoreGrad)" />
+            <path d="M150 132 C162 132, 168 143, 163 154 C158 164, 144 166, 137 157 C131 149, 136 138, 146 137 C153 136, 158 142, 156 149 C154 154, 147 155, 144 150"
+                  stroke="#f7c8d0" stroke-width="1.8" stroke-opacity="0.72" fill="none" stroke-linecap="round" />
+
+            <!-- Morning Dewdrop Highlights -->
+            <ellipse cx="122" cy="88" rx="3.2" ry="2" transform="rotate(-25 122 88)" fill="#ffffff" fill-opacity="0.72" />
+            <circle cx="179" cy="116" r="2.1" fill="#ffffff" fill-opacity="0.65" />
+            <circle cx="136" cy="176" r="1.8" fill="#ffffff" fill-opacity="0.55" />
+          </g>
+        </svg>
+      </button>
+
+      <!-- Minimal Title & Interactive Entrance Prompt -->
+      <h1 class="font-serif text-4xl sm:text-5xl font-semibold tracking-tight text-rosePetal-900 mt-4">
+        A Little World
+      </h1>
+      <p id="intro-hint" class="mt-2.5 text-sm sm:text-base text-rosePetal-700/85 font-light tracking-wide transition-all duration-300">
+        Touch the rose to enter
+      </p>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       MAIN SINGLE-PAGE EXPERIENCE
+       ======================================================================== -->
+  <div id="main-world" class="relative z-10 hidden">
+
+    <!-- STICKY TRANSLUCENT BOTANICAL NAVIGATION -->
+    <header class="botanical-nav sticky top-0 z-30 transition-all duration-300">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 sm:h-18">
+          <!-- Brand Mark -->
+          <a href="#about" class="flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-rosePetal-400 rounded-full px-2 py-1">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-rosePetal-200/80 text-rosePetal-700 group-hover:bg-rosePetal-300/80 transition-colors">
+              <!-- Mini Rose Emblem -->
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 3C8.5 3 6 5.5 6 8.8c0 2.5 1.5 4.7 3.8 5.6-.4.8-.8 1.8-.8 2.9 0 2.1 1.4 3.7 3 3.7s3-1.6 3-3.7c0-1.1-.4-2.1-.8-2.9C16.5 13.5 18 11.3 18 8.8 18 5.5 15.5 3 12 3zm0 2.2c2.1 0 3.8 1.6 3.8 3.6 0 1.9-1.7 3.5-3.8 3.5S8.2 10.7 8.2 8.8c0-2 1.7-3.6 3.8-3.6z"/>
+              </svg>
+            </span>
+            <span class="font-serif text-xl sm:text-2xl font-semibold text-rosePetal-900 tracking-tight">
+              A Little World
+            </span>
+          </a>
+
+          <!-- Desktop Navigation Links (5 Main Sections) -->
+          <nav aria-label="Primary Navigation" class="hidden md:flex items-center gap-1 lg:gap-2">
+            <a href="#about" data-nav-link="about" class="nav-link px-3.5 py-2 rounded-full text-sm font-medium text-rosePetal-800/85 hover:text-rosePetal-900 hover:bg-rosePetal-200/45 transition-all">
+              About Me
+            </a>
+            <a href="#music" data-nav-link="music" class="nav-link px-3.5 py-2 rounded-full text-sm font-medium text-rosePetal-800/85 hover:text-rosePetal-900 hover:bg-rosePetal-200/45 transition-all">
+              Music
+            </a>
+            <a href="#games" data-nav-link="games" class="nav-link px-3.5 py-2 rounded-full text-sm font-medium text-rosePetal-800/85 hover:text-rosePetal-900 hover:bg-rosePetal-200/45 transition-all">
+              Fun Games
+            </a>
+            <a href="#medical" data-nav-link="medical" class="nav-link px-3.5 py-2 rounded-full text-sm font-medium text-rosePetal-800/85 hover:text-rosePetal-900 hover:bg-rosePetal-200/45 transition-all">
+              Medical Space
+            </a>
+            <a href="#cat" data-nav-link="cat" class="nav-link px-3.5 py-2 rounded-full text-sm font-medium text-rosePetal-800/85 hover:text-rosePetal-900 hover:bg-rosePetal-200/45 transition-all">
+              My Cat
+            </a>
+          </nav>
+
+          <!-- Mobile Hamburger Button -->
+          <button
+            id="mobile-menu-btn"
+            type="button"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+            aria-label="Toggle navigation menu"
+            class="md:hidden inline-flex items-center justify-center p-2.5 rounded-full text-rosePetal-800 hover:bg-rosePetal-200/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-rosePetal-400 transition-colors"
+          >
+            <svg id="menu-icon-open" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
+            </svg>
+            <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown Menu -->
+      <div id="mobile-menu" class="hidden md:hidden border-t border-rosePetal-200/60 bg-rosePetal-50/95 backdrop-blur-lg px-4 pt-2 pb-4 space-y-1">
+        <a href="#about" data-nav-link="about" class="mobile-nav-link block px-4 py-2.5 rounded-2xl text-base font-medium text-rosePetal-900 hover:bg-rosePetal-200/50 transition-colors">
+          About Me
+        </a>
+        <a href="#music" data-nav-link="music" class="mobile-nav-link block px-4 py-2.5 rounded-2xl text-base font-medium text-rosePetal-900 hover:bg-rosePetal-200/50 transition-colors">
+          Music
+        </a>
+        <a href="#games" data-nav-link="games" class="mobile-nav-link block px-4 py-2.5 rounded-2xl text-base font-medium text-rosePetal-900 hover:bg-rosePetal-200/50 transition-colors">
+          Fun Games
+        </a>
+        <a href="#medical" data-nav-link="medical" class="mobile-nav-link block px-4 py-2.5 rounded-2xl text-base font-medium text-rosePetal-900 hover:bg-rosePetal-200/50 transition-colors">
+          Medical Space
+        </a>
+        <a href="#cat" data-nav-link="cat" class="mobile-nav-link block px-4 py-2.5 rounded-2xl text-base font-medium text-rosePetal-900 hover:bg-rosePetal-200/50 transition-colors">
+          My Cat
+        </a>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-24 sm:space-y-28">
+
+      <!-- ====================================================================
+           SECTION 1: ABOUT ME
+           ==================================================================== -->
+      <section id="about" class="reveal-section scroll-mt-24" aria-labelledby="about-heading">
+        <div class="botanical-card rounded-[2rem] p-6 sm:p-10 lg:p-12 relative overflow-hidden">
+          <!-- Subtle Corner Floral Watermark -->
+          <div class="pointer-events-none absolute -top-10 -right-10 w-56 h-56 rounded-full bg-gradient-to-br from-rosePetal-200/40 to-sageLeaf-200/30 blur-2xl"></div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
+            <!-- Soft Botanical Framed Portrait Placeholder -->
+            <div class="lg:col-span-5 flex flex-col items-center">
+              <div class="relative w-60 h-72 sm:w-68 sm:h-80 rounded-[2.25rem] p-2.5 bg-gradient-to-b from-rosePetal-200/80 via-white/90 to-sageLeaf-200/70 shadow-lg">
+                <div class="w-full h-full rounded-[1.8rem] overflow-hidden relative bg-rosePetal-100">
+                  <img
+                    id="about-portrait"
+                    src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=700&q=80"
+                    alt="Soft botanical aesthetic portrait placeholder"
+                    onerror="this.onerror=null;this.src='https://placehold.co/600x750/f8e1e4/8f4352?text=Portrait+Placeholder';"
+                    class="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-rosePetal-900/20 via-transparent to-transparent"></div>
+                </div>
+
+                <!-- Floating Botanical Leaf Badge -->
+                <div class="absolute -bottom-3 -right-3 bg-white/90 backdrop-blur-md border border-sageLeaf-200 px-3.5 py-1.5 rounded-full shadow-sm flex items-center gap-1.5 text-xs font-medium text-sageLeaf-700">
+                  <span class="w-2 h-2 rounded-full bg-sageLeaf-500 animate-pulse"></span>
+                  <span id="about-status-badge">Blooming slowly</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Personalized Welcome Copy & Interest Pills -->
+            <div class="lg:col-span-7 space-y-5 text-center lg:text-left">
+              <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-sageLeaf-100/80 border border-sageLeaf-200/80 text-sageLeaf-700 text-xs font-medium tracking-wider uppercase">
+                <span>01</span>
+                <span>•</span>
+                <span>Welcome Sanctuary</span>
+              </div>
+
+              <h2 id="about-heading" class="font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold text-rosePetal-900 leading-tight">
+                Hello, welcome to my little corner of the internet.
+              </h2>
+
+              <div id="about-bio-container" class="space-y-4 text-rosePetal-900/80 text-base sm:text-lg leading-relaxed font-normal">
+                <!-- Populated dynamically from SITE_CONFIG.about -->
+              </div>
+
+              <!-- Botanical Interest Pills -->
+              <div class="pt-2">
+                <p class="text-xs uppercase tracking-widest text-sageLeaf-700 font-semibold mb-3">
+                  Things that make me smile
+                </p>
+                <div id="about-interests" class="flex flex-wrap justify-center lg:justify-start gap-2">
+                  <!-- Populated dynamically from SITE_CONFIG.about.interests -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 2: MUSIC (EMBEDDED YOUTUBE + EXTERNAL LINKS)
+           ==================================================================== -->
+      <section id="music" class="reveal-section scroll-mt-24" aria-labelledby="music-heading">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rosePetal-200/65 text-rosePetal-800 text-xs font-medium tracking-wider uppercase mb-2">
+              <span>02</span>
+              <span>•</span>
+              <span>Melodies &amp; Soundscapes</span>
+            </div>
+            <h2 id="music-heading" class="font-serif text-3xl sm:text-4xl font-semibold text-rosePetal-900">
+              Songs That Feel Like Warm Sunlight
+            </h2>
+          </div>
+          <p class="text-sm text-rosePetal-800/75 max-w-md">
+            Press play directly inside any botanical card below to listen while wandering through the garden.
+          </p>
+        </div>
+
+        <!-- Music Tracks Grid (Direct Embedded YouTube Players Inside Botanical Cards) -->
+        <div id="music-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Populated dynamically from SITE_CONFIG.music -->
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 3: FUN GAMES (COZY & CLASSIC BROWSER GAMES)
+           ==================================================================== -->
+      <section id="games" class="reveal-section scroll-mt-24" aria-labelledby="games-heading">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sageLeaf-100/85 text-sageLeaf-800 text-xs font-medium tracking-wider uppercase mb-2">
+              <span>03</span>
+              <span>•</span>
+              <span>Playful Whimsy</span>
+            </div>
+            <h2 id="games-heading" class="font-serif text-3xl sm:text-4xl font-semibold text-rosePetal-900">
+              Cozy &amp; Classic Browser Games
+            </h2>
+          </div>
+          <p class="text-sm text-rosePetal-800/75 max-w-md">
+            Take a gentle study break with these safe, free, browser-based puzzle and word games.
+          </p>
+        </div>
+
+        <div id="games-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Populated dynamically from SITE_CONFIG.games -->
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 4: MEDICAL SPACE (INTERACTIVE EDUCATIONAL RESOURCES)
+           ==================================================================== -->
+      <section id="medical" class="reveal-section scroll-mt-24" aria-labelledby="medical-heading">
+        <div class="botanical-card rounded-[2rem] p-6 sm:p-10">
+          <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-8 gap-6">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sageLeaf-100 text-sageLeaf-800 text-xs font-medium tracking-wider uppercase mb-2">
+                <span>04</span>
+                <span>•</span>
+                <span>Healing &amp; Knowledge</span>
+              </div>
+              <h2 id="medical-heading" class="font-serif text-3xl sm:text-4xl font-semibold text-rosePetal-900">
+                Medical Space
+              </h2>
+              <p class="text-sm sm:text-base text-rosePetal-800/80 mt-2 max-w-xl">
+                A curated greenhouse of free, high-yield medical educational platforms, anatomy atlases, and clinical reference tools.
+              </p>
+            </div>
+
+            <!-- Interactive Category Filter Pills -->
+            <div id="medical-filters" role="tablist" aria-label="Filter medical resources" class="flex flex-wrap gap-2">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Medical Resource Cards Grid -->
+          <div id="medical-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Populated dynamically from SITE_CONFIG.medicalResources -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 5: MY CAT (EXPANDABLE GALLERY + LIGHTBOX)
+           ==================================================================== -->
+      <section id="cat" class="reveal-section scroll-mt-24" aria-labelledby="cat-heading">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rosePetal-200/70 text-rosePetal-800 text-xs font-medium tracking-wider uppercase mb-2">
+              <span>05</span>
+              <span>•</span>
+              <span>Purrs &amp; Whiskers</span>
+            </div>
+            <h2 id="cat-heading" class="font-serif text-3xl sm:text-4xl font-semibold text-rosePetal-900">
+              My Cat’s Little Scrapbook
+            </h2>
+          </div>
+          <p class="text-sm text-rosePetal-800/75 max-w-md">
+            Click any snapshot to open it in the full-screen lightbox viewer.
+          </p>
+        </div>
+
+        <!-- Expandable Responsive Gallery Grid -->
+        <div id="cat-gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Populated dynamically from SITE_CONFIG.catGallery -->
+        </div>
+
+        <!-- Show More / Show Less Toggle Button -->
+        <div class="mt-8 flex justify-center">
+          <button
+            id="cat-expand-btn"
+            type="button"
+            aria-expanded="false"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/80 hover:bg-white text-rosePetal-900 border border-rosePetal-300/80 shadow-sm hover:shadow transition-all text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-rosePetal-400"
+          >
+            <span id="cat-expand-label">Show More Moments</span>
+            <svg id="cat-expand-icon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           UNLISTED BOTTOM SECTION: TUCKED-AWAY TELEGRAM STATIONERY NOTE
+           (Deliberately omitted from the top navigation bar)
+           ==================================================================== -->
+      <section id="secret-note" aria-labelledby="secret-note-heading" class="pt-10 pb-8">
+        <div class="max-w-2xl mx-auto">
+          <!-- Subtle Botanical Divider -->
+          <div class="flex items-center justify-center gap-3 mb-8 opacity-60">
+            <span class="h-px w-16 bg-gradient-to-r from-transparent to-rosePetal-400"></span>
+            <svg class="w-5 h-5 text-sageLeaf-600" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66l.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8Z"/>
+            </svg>
+            <span class="h-px w-16 bg-gradient-to-l from-transparent to-rosePetal-400"></span>
+          </div>
+
+          <!-- Stationery Letter Card -->
+          <div class="stationery-paper rounded-[2rem] p-6 sm:p-10 border border-rosePetal-300/70 shadow-[0_14px_40px_-15px_rgba(143,67,82,0.16)] relative">
+            <!-- Decorative Wax Seal Stamp -->
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rosePetal-500 to-rosePetal-700 text-rosePetal-50 flex items-center justify-center shadow-md mx-auto mb-4 ring-4 ring-rosePetal-100" aria-hidden="true">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+              </svg>
+            </div>
+
+            <div class="text-center mb-6">
+              <p class="text-xs uppercase tracking-[0.22em] text-sageLeaf-600 font-medium">
+                Tucked Away at the Garden Gate
+              </p>
+              <h2 id="secret-note-heading" class="font-serif text-2xl sm:text-3xl font-semibold text-rosePetal-900 mt-1">
+                Leave a Whispered Note
+              </h2>
+              <p class="text-sm text-rosePetal-800/75 mt-1.5 max-w-md mx-auto">
+                You found the quiet stationery corner. Send a private note directly to my Telegram—leave your name or remain a friendly secret.
+              </p>
+            </div>
+
+            <form id="telegram-note-form" class="space-y-4" novalidate>
+              <div>
+                <label for="sender-name" class="block text-xs font-semibold uppercase tracking-wider text-rosePetal-800/80 mb-1.5">
+                  Your Name <span class="font-normal normal-case text-rosePetal-600/75">(optional)</span>
+                </label>
+                <input
+                  id="sender-name"
+                  name="senderName"
+                  type="text"
+                  maxlength="60"
+                  placeholder="An angelic princess.."
+                  class="w-full px-4 py-3 rounded-2xl bg-white/90 border border-rosePetal-200 focus:border-rosePetal-400 focus:ring-2 focus:ring-rosePetal-200/70 focus:outline-none text-sm text-rosePetal-950 placeholder:text-rosePetal-400 transition-all"
+                />
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label for="sender-message" class="block text-xs font-semibold uppercase tracking-wider text-rosePetal-800/80">
+                    Your Message <span class="text-rosePetal-500">*</span>
+                  </label>
+                  <span id="char-counter" class="text-xs text-rosePetal-600/75">0 / 1000</span>
+                </div>
+                <textarea
+                  id="sender-message"
+                  name="message"
+                  rows="4"
+                  maxlength="1000"
+                  required
+                  placeholder="Write a kind thought, a song recommendation, or a quiet hello..."
+                  class="w-full px-4 py-3 rounded-2xl bg-white/90 border border-rosePetal-200 focus:border-rosePetal-400 focus:ring-2 focus:ring-rosePetal-200/70 focus:outline-none text-sm text-rosePetal-950 placeholder:text-rosePetal-400 transition-all resize-y"
+                ></textarea>
+              </div>
+
+              <!-- Status Feedback Banner (Replaces alert()) -->
+              <div id="telegram-feedback" role="status" aria-live="polite" class="hidden rounded-2xl px-4 py-3 text-sm"></div>
+
+              <div class="pt-1 flex justify-center">
+                <button
+                  id="telegram-submit-btn"
+                  type="submit"
+                  class="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-gradient-to-r from-rosePetal-500 to-rosePetal-600 hover:from-rosePetal-600 hover:to-rosePetal-700 text-white font-medium text-sm shadow-md hover:shadow-lg transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-rosePetal-500 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <span id="telegram-btn-text">Send Note via Telegram</span>
+                  <svg id="telegram-btn-icon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                  </svg>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Minimal Footer -->
+    <footer class="text-center py-8 px-4 text-xs text-rosePetal-700/70">
+      <p>Crafted with calm petals &amp; quiet code &bull; A Little World</p>
+    </footer>
+  </div>
+
+  <!-- ========================================================================
+       LIGHTBOX MODAL FOR MY CAT GALLERY
+       ======================================================================== -->
+  <div
+    id="cat-lightbox"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="lightbox-caption"
+    class="fixed inset-0 z-50 hidden bg-rosePetal-950/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+  >
+    <div class="relative max-w-4xl w-full flex flex-col items-center">
+      <!-- Close Button -->
+      <button
+        id="lightbox-close"
+        type="button"
+        aria-label="Close gallery lightbox"
+        class="self-end mb-3 p-2.5 rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <!-- Image Frame + Prev/Next Controls -->
+      <div class="relative w-full flex items-center justify-center">
+        <button
+          id="lightbox-prev"
+          type="button"
+          aria-label="Previous photo"
+          class="absolute left-2 sm:-left-12 z-10 p-3 rounded-full bg-white/20 hover:bg-white/35 text-white backdrop-blur-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <div class="overflow-hidden rounded-3xl bg-rosePetal-900/40 border border-white/20 shadow-2xl max-h-[72vh] flex items-center justify-center">
+          <img
+            id="lightbox-img"
+            src=""
+            alt=""
+            class="max-h-[72vh] w-auto object-contain select-none transition-transform duration-300"
+          />
+        </div>
+
+        <button
+          id="lightbox-next"
+          type="button"
+          aria-label="Next photo"
+          class="absolute right-2 sm:-right-12 z-10 p-3 rounded-full bg-white/20 hover:bg-white/35 text-white backdrop-blur-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Caption & Counter -->
+      <div class="mt-4 text-center text-white max-w-xl px-4">
+        <p id="lightbox-caption" class="font-serif text-xl sm:text-2xl text-rosePetal-100"></p>
+        <p id="lightbox-counter" class="text-xs text-rosePetal-200/75 mt-1 tracking-widest uppercase"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODULAR APPLICATION SCRIPT & SITE_CONFIG
+       ======================================================================== -->
+  <script>
+    /**
+     * ==========================================================================
+     * SITE_CONFIG — EASY CUSTOMIZATION HUB
+     * ==========================================================================
+     * Edit the values below to personalize "A Little World" with your own bio,
+     * favorite YouTube tracks, browser games, medical bookmarks, cat photos,
+     * and your secure serverless Telegram proxy URL.
+     */
+    const SITE_CONFIG = {
+      // 1. ABOUT ME SECTION
+      about: {
+        portraitUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=700&q=80",
+        statusBadge: "Blooming slowly",
+        heading: "Hello, welcome to my little corner of the internet.",
+        paragraphs: [
+          "Hey, My name is MERAH Malak, It was a beautiful sunny Tuesday on the 21st of October 2003, where the world marked a lucky day of me coming into it, I came to the world with the purpose of bringing my own energy into it, orchestrering everyone around me with my own radiance, inspired by every lesson i learnt in my life, I try to shape everything as if it was produced by Me.", "My dream was becoming a doctor, in the name of pleasing Allah by trying to leave a bright mark on the cruel world we live in, Through the dark and cold days, I managed to make it out and finally succeed at Achieving my BAC exam, and attempting the Med School, that I'm happily fighting for my own dream in my 5th year.",
+          "Pull up a chair, wander through the sections at your own pace, and feel free to leave a quiet note at the bottom of the garden before you go."
+        ],
+        interests: [
+          "Pressed Flowers",
+          "Acoustic & Lo-Fi Piano",
+          "Clinical Medicine",
+          "Rainy Window Tea",
+          "Cozy Puzzle Games",
+          "Cat Naps"
+        ]
+      },
+
+      // 2. MUSIC SECTION
+      // Duplicate any object below to add more songs.
+      // You can paste either:
+      //   - `embedSrc`: the exact `src="..."` URL from YouTube's Share -> Embed code, OR
+      //   - `embedCode`: the entire `<iframe ...></iframe>` snippet copied from YouTube.
+      // Both render YouTube's exact standard iframe directly inside each card without
+      // modifying parameters (like `?si=...`) or adding overrides that cause Error 153.
+music: [
+        {
+          title: "Sous La Lune",
+          artist: "Jul",
+          duration: "3:44",
+          embedSrc: "https://www.youtube.com/embed/Pwn74QiCeEU?si=XXFqZerRJmFFS_Ae",
+          embedCode: `<iframe width="560" height="315" src="https://www.youtube.com/embed/Pwn74QiCeEU?si=XXFqZerRJmFFS_Ae" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+        },
+        {
+          title: "Pour un violet",
+          artist: "Jul",
+          duration: "4:15",
+          embedSrc: "https://www.youtube.com/embed/W4s44xGPMZQ?si=jOJoydJe4vKAVHjb",
+          embedCode: `<iframe width="560" height="315" src="https://www.youtube.com/embed/W4s44xGPMZQ?si=jOJoydJe4vKAVHjb" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+        },
+        {
+          title: "Mabkach Hssab Bini W Binek",
+          artist: "Cheb Houari Manar",
+          duration: "5:29",
+          embedSrc: "https://www.youtube.com/embed/Nsid_I9MnTs?si=ikgGj2h12ZkhfqRg",
+          embedCode: `<iframe width="560" height="315" src="https://www.youtube.com/embed/Nsid_I9MnTs?si=ikgGj2h12ZkhfqRg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+        },
+        {
+          title: "J'oublie tout",
+          artist: "Jul",
+          duration: "5:17",
+          embedSrc: "https://www.youtube.com/embed/rTWzswSVjbo?si=cLjie5wW64uZmQpe",
+          embedCode: `<iframe width="560" height="315" src="https://www.youtube.com/embed/rTWzswSVjbo?si=cLjie5wW64uZmQpe" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+        },
+        {
+          title: "Makach Kifech",
+          artist: "Bilel Tacchini",
+          duration: "4:00",
+          embedSrc: "https://www.youtube.com/embed/8wPdmRe0sWM?si=Jfu1W-GD1Ov28TFX",
+          embedCode: `<iframe width="560" height="315" src="https://www.youtube.com/embed/8wPdmRe0sWM?si=Jfu1W-GD1Ov28TFX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+        },
+        {
+          title: "Diroulha El Aakal",
+          artist: "Cheb Akil",
+          duration: "7:40",
+          embedSrc: "https://www.youtube.com/embed/On_5gNULzIk?si=vc5aLnuSo2oRPStC",
+          embedCode: `<iframe width="560" height="315" src="https://www.youtube.com/embed/On_5gNULzIk?si=vc5aLnuSo2oRPStC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+        }
+      ],
+
+      // 3. FUN GAMES SECTION (Safe, Free Browser Games)
+      games: [
+        {
+          title: "2048",
+          tag: "Number Puzzle",
+          description: "Slide numbered tiles across a tranquil grid to merge matching powers of two.",
+          url: "https://play2048.co/",
+          accent: "rose"
+        },
+        {
+          title: "Little Alchemy 2",
+          tag: "Cozy Discovery",
+          description: "Combine earth, air, fire, and water to discover hundreds of charming items and creatures.",
+          url: "https://littlealchemy2.com/",
+          accent: "sage"
+        },
+        {
+          title: "Lichess",
+          tag: "Classic Strategy",
+          description: "Completely free, ad-free, open-source chess—play quick puzzles or calm correspondence games.",
+          url: "https://lichess.org/",
+          accent: "rose"
+        },
+        {
+          title: "Skribbl.io",
+          tag: "Doodle & Guess",
+          description: "Lighthearted multiplayer drawing and word-guessing fun to play with friends.",
+          url: "https://skribbl.io/",
+          accent: "sage"
+        },
+        {
+          title: "OpenGuessr",
+          tag: "World Explorer",
+          description: "Free Street View geography exploration—wander down global roads and guess where you landed.",
+          url: "https://openguessr.com/",
+          accent: "rose"
+        },
+        {
+          title: "A Dark Room",
+          tag: "Minimalist Story",
+          description: "A captivating, quiet text-based adventure that begins with lighting a single fire.",
+          url: "https://adarkroom.doublespeakgames.com/",
+          accent: "sage"
+        }
+      ],
+
+      // 4. MEDICAL SPACE SECTION (Free Medical Educational Resources)
+      medicalResources: [
+        {
+          title: "Radiopaedia",
+          category: "Pathology & Radiology",
+          badge: "Free Open Atlas",
+          description: "Collaborative radiology reference with thousands of real clinical cases, CT/MRI stacks, and clear imaging breakdowns.",
+          url: "https://radiopaedia.org/"
+        },
+        {
+          title: "Geeky Medics",
+          category: "Clinical Skills",
+          badge: "OSCE & Guides",
+          description: "Step-by-step clinical examination guides, history-taking frameworks, and communication checklists for students.",
+          url: "https://geekymedics.com/"
+        },
+        {
+          title: "OpenStax Anatomy & Physiology",
+          category: "Anatomy",
+          badge: "Peer-Reviewed Textbook",
+          description: "Comprehensive, openly licensed textbook with crisp anatomical illustrations and physiological system reviews.",
+          url: "https://openstax.org/details/books/anatomy-and-physiology-2e"
+        },
+        {
+          title: "Kenhub Free Articles & Quizzes",
+          category: "Anatomy",
+          badge: "Visual Histology & Anatomy",
+          description: "Structured musculoskeletal, neuroanatomy, and histology articles paired with introductory labeling practice.",
+          url: "https://www.kenhub.com/en/library"
+        },
+        {
+          title: "PubMed & PMC",
+          category: "Reference",
+          badge: "Biomedical Literature",
+          description: "National Library of Medicine search engine providing free full-text biomedical and clinical research articles.",
+          url: "https://pubmed.ncbi.nlm.nih.gov/"
+        },
+        {
+          title: "Life in the Fast Lane (LITFL)",
+          category: "Pathology & Radiology",
+          badge: "ECG & Critical Care",
+          description: "Essential open-access library for mastering 12-lead ECG interpretation, toxicology, and emergency medicine pearls.",
+          url: "https://litfl.com/"
+        },
+        {
+          title: "MDCalc",
+          category: "Clinical Skills",
+          badge: "Evidence-Based Tools",
+          description: "Trusted clinical decision calculators, scoring systems, and evidence summaries used at the bedside.",
+          url: "https://www.mdcalc.com/"
+        },
+        {
+          title: "Osmosis Open Library",
+          category: "Reference",
+          badge: "Visual Concept Notes",
+          description: "Clear, intuitive pathophysiology summaries and high-yield clinical concept overviews.",
+          url: "https://www.osmosis.org/learn"
+        }
+      ],
+
+      // 5. MY CAT GALLERY SECTION
+      catGallery: [
+        {
+          url: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80",
+          caption: "Morning sunbeam inspection by the window"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=800&q=80",
+          caption: "Very serious contemplation of a passing butterfly"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1495360010541-f48722b34f7d?auto=format&fit=crop&w=800&q=80",
+          caption: "Soft paws tucked neatly into a croissant loaf"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1519052537078-e6302a4968d4?auto=format&fit=crop&w=800&q=80",
+          caption: "Afternoon yawn after a four-hour nap shift"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=800&q=80",
+          caption: "Distinguished whisker portrait"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?auto=format&fit=crop&w=800&q=80",
+          caption: "Garden explorer among the blossoms"
+        }
+      ],
+
+      // 6. SECURE TELEGRAM BACKEND ENDPOINT
+      // IMPORTANT SECURITY NOTE: Never put your raw Telegram Bot Token in frontend JS.
+      // Deploy a lightweight Cloudflare Worker, Vercel Edge Function, or Netlify Function
+      // that holds `TELEGRAM_BOT_TOKEN` & `TELEGRAM_CHAT_ID` as server-side secrets,
+      // and paste its HTTPS URL here (e.g., "https://your-worker.yourname.workers.dev/send").
+      // When left empty (""), the form runs in a safe, realistic Demo Preview mode.
+      telegramEndpoint: "https://little-world.notskyzzo.workers.dev"
+    };
+
+    /**
+     * ==========================================================================
+     * MODULE 1: AMBIENT BOTANICAL MEADOW & FLOATING PETALS CANVAS
+     * ==========================================================================
+     */
+    const MeadowBackground = (() => {
+      const canvas = document.getElementById("meadow-canvas");
+      const ctx = canvas.getContext("2d");
+      let width = 0;
+      let height = 0;
+      let petals = [];
+      let blades = [];
+      let animationFrameId = null;
+
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        initMeadowElements();
+      }
+
+      function initMeadowElements() {
+        // Soft drifting rose petals
+        const petalCount = Math.min(26, Math.max(12, Math.floor(width / 55)));
+        petals = Array.from({ length: petalCount }, () => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          size: 5 + Math.random() * 6,
+          speedY: 0.25 + Math.random() * 0.45,
+          speedX: (Math.random() - 0.5) * 0.35,
+          rotation: Math.random() * Math.PI * 2,
+          rotSpeed: (Math.random() - 0.5) * 0.015,
+          swayOffset: Math.random() * Math.PI * 2,
+          color: Math.random() > 0.3
+            ? "rgba(227, 156, 168, 0.36)"
+            : "rgba(248, 225, 228, 0.55)"
+        }));
+
+        // Gentle swaying grass & wildflower stems along the lower edge
+        const bladeCount = Math.min(48, Math.max(20, Math.floor(width / 32)));
+        blades = Array.from({ length: bladeCount }, (_, i) => ({
+          x: (width / bladeCount) * i + Math.random() * 20,
+          height: 45 + Math.random() * 75,
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.008 + Math.random() * 0.008,
+          hasBlomaossom: i % 4 === 0,
+          blossomColor: i % 8 === 0 ? "rgba(217, 130, 144, 0.35)" : "rgba(255, 250, 250, 0.55)"
+        }));
+      }
+
+      function drawPetal(p, time) {
+        ctx.save();
+        const swayX = Math.sin(time * 0.001 + p.swayOffset) * 14;
+        ctx.translate(p.x + swayX, p.y);
+        ctx.rotate(p.rotation);
+
+        ctx.beginPath();
+        ctx.moveTo(0, -p.size);
+        ctx.bezierCurveTo(p.size * 0.9, -p.size * 0.6, p.size * 0.9, p.size * 0.7, 0, p.size);
+        ctx.bezierCurveTo(-p.size * 0.9, p.size * 0.7, -p.size * 0.9, -p.size * 0.6, 0, -p.size);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawMeadowSilhouettes(time) {
+        blades.forEach((b) => {
+          const sway = prefersReducedMotion ? 0 : Math.sin(time * b.speed + b.phase) * 14;
+          const baseX = b.x;
+          const baseY = height;
+          const tipX = baseX + sway;
+          const tipY = height - b.height;
+
+          ctx.beginPath();
+          ctx.moveTo(baseX, baseY);
+          ctx.quadraticCurveTo(baseX + sway * 0.4, height - b.height * 0.55, tipX, tipY);
+          ctx.strokeStyle = "rgba(107, 142, 120, 0.16)";
+          ctx.lineWidth = 1.6;
+          ctx.stroke();
+
+          if (b.hasBlossom) {
+            ctx.beginPath();
+            ctx.arc(tipX, tipY, 3.2, 0, Math.PI * 2);
+            ctx.fillStyle = b.blossomColor;
+            ctx.fill();
+          }
+        });
+      }
+
+      function render(time = 0) {
+        ctx.clearRect(0, 0, width, height);
+
+        // Draw swaying botanical meadow along bottom viewport
+        drawMeadowSilhouettes(time);
+
+        // Update and draw drifting petals
+        petals.forEach((p) => {
+          if (!prefersReducedMotion) {
+            p.y += p.speedY;
+            p.x += p.speedX;
+            p.rotation += p.rotSpeed;
+
+            if (p.y > height + 20) {
+              p.y = -20;
+              p.x = Math.random() * width;
+            }
+            if (p.x > width + 20) p.x = -20;
+            if (p.x < -20) p.x = width + 20;
+          }
+          drawPetal(p, time);
+        });
+
+        if (!prefersReducedMotion) {
+          animationFrameId = requestAnimationFrame(render);
+        }
+      }
+
+      function start() {
+        resize();
+        window.addEventListener("resize", resize);
+        render(0);
+      }
+
+      return { start };
+    })();
+
+    /**
+     * ==========================================================================
+     * MODULE 2: INTERACTIVE ROSE PORTAL ENTRANCE
+     * ==========================================================================
+     */
+    const IntroPortal = (() => {
+      const introScreen = document.getElementById("intro-screen");
+      const enterBtn = document.getElementById("enter-rose-btn");
+      const introHint = document.getElementById("intro-hint");
+      const mainWorld = document.getElementById("main-world");
+
+      let hasEntered = false;
+
+      function enterWorld() {
+        if (hasEntered) return;
+        hasEntered = true;
+
+        // Reveal main container underneath so transition feels seamless
+        mainWorld.classList.remove("hidden");
+        requestAnimationFrame(() => {
+          introScreen.classList.add("entered");
+          mainWorld.classList.add("visible");
+        });
+
+        // Remove intro screen from tab flow after transition
+        setTimeout(() => {
+          introScreen.style.display = "none";
+          ScrollObserver.observeAll();
+        }, 1150);
+      }
+
+      function init() {
+        enterBtn.addEventListener("mouseenter", () => {
+          introHint.textContent = "Enter A Little World";
+          introHint.classList.add("text-rosePetal-900", "font-medium");
+        });
+
+        enterBtn.addEventListener("mouseleave", () => {
+          introHint.textContent = "Touch the rose to enter";
+          introHint.classList.remove("text-rosePetal-900", "font-medium");
+        });
+
+        enterBtn.addEventListener("focus", () => {
+          introHint.textContent = "Press Enter to open A Little World";
+        });
+
+        enterBtn.addEventListener("blur", () => {
+          introHint.textContent = "Touch the rose to enter";
+        });
+
+        enterBtn.addEventListener("click", enterWorld);
+      }
+
+      return { init };
+    })();
+
+    /**
+     * ==========================================================================
+     * MODULE 3: CONTENT RENDERERS (ABOUT, MUSIC, GAMES, MEDICAL, CAT)
+     * ==========================================================================
+     */
+    const ContentRenderer = (() => {
+      // Escape HTML helper to prevent XSS if user edits SITE_CONFIG
+      function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      /* 1. Render About Me */
+      function renderAbout() {
+        const { portraitUrl, statusBadge, heading, paragraphs, interests } = SITE_CONFIG.about;
+        document.getElementById("about-portrait").src = portraitUrl;
+        document.getElementById("about-status-badge").textContent = statusBadge;
+        document.getElementById("about-heading").textContent = heading;
+
+        const bioContainer = document.getElementById("about-bio-container");
+        bioContainer.innerHTML = paragraphs
+          .map((p) => `<p>${escapeHtml(p)}</p>`)
+          .join("");
+
+        const interestsContainer = document.getElementById("about-interests");
+        interestsContainer.innerHTML = interests
+          .map(
+            (item) => `
+              <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white/80 text-rosePetal-900 border border-rosePetal-200/80 shadow-2xs">
+                <span class="w-1.5 h-1.5 rounded-full bg-rosePetal-400"></span>
+                ${escapeHtml(item)}
+              </span>
+            `
+          )
+          .join("");
+      }
+
+      /* 2. Render Music Cards with Direct Embedded YouTube Iframes */
+      function renderMusic() {
+        const grid = document.getElementById("music-grid");
+
+        grid.innerHTML = SITE_CONFIG.music
+          .map((track) => {
+            // Use the exact embedCode if provided, otherwise build YouTube's exact standard
+            // <iframe> using the unmodified embedSrc URL (preserving ?si=... and all attributes).
+            const rawIframe =
+              track.embedCode && track.embedCode.trim()
+                ? track.embedCode.trim()
+                : `<iframe width="560" height="315" src="${escapeHtml(track.embedSrc || "")}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+
+            // Ensure the iframe scales cleanly inside the responsive 16:9 card frame
+            // without modifying its src URL or security/referrer attributes.
+            const responsiveIframe = rawIframe.replace(
+              /<iframe\b/i,
+              '<iframe class="w-full h-full border-0 block"'
+            );
+
+            return `
+              <article class="botanical-card rounded-3xl overflow-hidden flex flex-col justify-between group">
+                <div>
+                  <!-- Responsive 16:9 Embedded YouTube Video Frame -->
+                  <div class="relative w-full aspect-video bg-rosePetal-950/10 overflow-hidden border-b border-rosePetal-200/50">
+                    ${responsiveIframe}
+                  </div>
+
+                  <!-- Botanical Track Details -->
+                  <div class="p-5 pb-3">
+                    <div class="flex items-start justify-between gap-2">
+                      <h3 class="font-serif text-xl font-semibold text-rosePetal-900 leading-snug">
+                        ${escapeHtml(track.title)}
+                      </h3>
+                      ${
+                        track.duration
+                          ? `<span class="flex-shrink-0 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-rosePetal-100/90 text-rosePetal-800 border border-rosePetal-200/70">
+                               ${escapeHtml(track.duration)}
+                             </span>`
+                          : ""
+                      }
+                    </div>
+                    <p class="text-xs font-medium text-sageLeaf-700 mt-1">${escapeHtml(track.artist)}</p>
+                    ${
+                      track.note
+                        ? `<p class="text-xs text-rosePetal-800/75 mt-2.5 leading-relaxed">
+                             ${escapeHtml(track.note)}
+                           </p>`
+                        : ""
+                    }
+                  </div>
+                </div>
+
+                <div class="px-5 pb-5 pt-2 flex items-center justify-between gap-2">
+                  <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-sageLeaf-800 bg-sageLeaf-100/80 px-3 py-1 rounded-full">
+                    <span class="w-1.5 h-1.5 rounded-full bg-sageLeaf-500"></span>
+                    YouTube Player
+                  </span>
+                  <span class="text-[11px] text-rosePetal-700/70 italic">
+                    Botanical Collection
+                  </span>
+                </div>
+              </article>
+            `;
+          })
+          .join("");
+      }
+
+      /* 3. Render Fun Games */
+      function renderGames() {
+        const grid = document.getElementById("games-grid");
+        grid.innerHTML = SITE_CONFIG.games
+          .map((game) => {
+            const isRose = game.accent === "rose";
+            const badgeBg = isRose
+              ? "bg-rosePetal-100 text-rosePetal-800 border-rosePetal-200"
+              : "bg-sageLeaf-100 text-sageLeaf-800 border-sageLeaf-200";
+            const artBg = isRose
+              ? "from-rosePetal-200/75 via-rosePetal-100/60 to-white/80 text-rosePetal-700"
+              : "from-sageLeaf-200/75 via-sageLeaf-100/60 to-white/80 text-sageLeaf-700";
+
+            return `
+              <a
+                href="${escapeHtml(game.url)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="botanical-card rounded-3xl p-5 flex flex-col justify-between group hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-rosePetal-400"
+              >
+                <div>
+                  <!-- Custom Botanical Art Banner -->
+                  <div class="h-32 rounded-2xl bg-gradient-to-br ${artBg} border border-white/80 mb-4 relative overflow-hidden flex items-center justify-center">
+                    <svg class="w-16 h-16 opacity-30 group-hover:scale-110 transition-transform duration-500" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <circle cx="32" cy="32" r="22" stroke-dasharray="4 4"/>
+                      <path d="M32 14 C38 24, 48 26, 50 32 C48 38, 38 40, 32 50 C26 40, 16 38, 14 32 C16 26, 26 24, 32 14 Z" fill="currentColor" fill-opacity="0.18"/>
+                    </svg>
+                    <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[11px] font-medium border ${badgeBg}">
+                      ${escapeHtml(game.tag)}
+                    </span>
+                    <span class="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/85 flex items-center justify-center text-rosePetal-800 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M7 7h10v10"/>
+                      </svg>
+                    </span>
+                  </div>
+
+                  <h3 class="font-serif text-2xl font-semibold text-rosePetal-900 group-hover:text-rosePetal-700 transition-colors">
+                    ${escapeHtml(game.title)}
+                  </h3>
+                  <p class="text-sm text-rosePetal-900/75 mt-1.5 leading-relaxed">
+                    ${escapeHtml(game.description)}
+                  </p>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-rosePetal-200/50 flex items-center justify-between text-xs font-medium text-sageLeaf-700">
+                  <span>Free Browser Play</span>
+                  <span class="group-hover:translate-x-1 transition-transform">Launch Game &rarr;</span>
+                </div>
+              </a>
+            `;
+          })
+          .join("");
+      }
+
+      /* 4. Render Medical Space with Category Filters */
+      function renderMedicalSpace() {
+        const filtersContainer = document.getElementById("medical-filters");
+        const grid = document.getElementById("medical-grid");
+        const categories = ["All", "Anatomy", "Clinical Skills", "Pathology & Radiology", "Reference"];
+        let activeCategory = "All";
+
+        function renderFilterButtons() {
+          filtersContainer.innerHTML = categories
+            .map((cat) => {
+              const isActive = cat === activeCategory;
+              return `
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected="${isActive}"
+                  data-med-cat="${escapeHtml(cat)}"
+                  class="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-sageLeaf-400 ${
+                    isActive
+                      ? "bg-sageLeaf-600 text-white shadow-xs"
+                      : "bg-white/75 text-sageLeaf-800 hover:bg-sageLeaf-100 border border-sageLeaf-200/70"
+                  }"
+                >
+                  ${escapeHtml(cat)}
+                </button>
+              `;
+            })
+            .join("");
+        }
+
+        function renderCards() {
+          const items =
+            activeCategory === "All"
+              ? SITE_CONFIG.medicalResources
+              : SITE_CONFIG.medicalResources.filter((r) => r.category === activeCategory);
+
+          grid.innerHTML = items
+            .map(
+              (res) => `
+                <a
+                  href="${escapeHtml(res.url)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="rounded-3xl p-5 bg-white/80 hover:bg-white border border-sageLeaf-200/80 hover:border-sageLeaf-400 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group focus:outline-none focus-visible:ring-2 focus-visible:ring-sageLeaf-500"
+                >
+                  <div>
+                    <div class="flex items-center justify-between gap-2 mb-2.5">
+                      <span class="px-3 py-0.5 rounded-full text-[11px] font-semibold bg-sageLeaf-100 text-sageLeaf-800">
+                        ${escapeHtml(res.category)}
+                      </span>
+                      <span class="text-[11px] font-medium text-rosePetal-700 bg-rosePetal-100/80 px-2.5 py-0.5 rounded-full">
+                        ${escapeHtml(res.badge)}
+                      </span>
+                    </div>
+
+                    <h3 class="font-serif text-xl sm:text-2xl font-semibold text-rosePetal-950 group-hover:text-sageLeaf-700 transition-colors flex items-center justify-between gap-2">
+                      <span>${escapeHtml(res.title)}</span>
+                      <svg class="w-4 h-4 flex-shrink-0 text-sageLeaf-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M7 7h10v10"/>
+                      </svg>
+                    </h3>
+
+                    <p class="text-sm text-rosePetal-900/75 mt-2 leading-relaxed">
+                      ${escapeHtml(res.description)}
+                    </p>
+                  </div>
+                </a>
+              `
+            )
+            .join("");
+        }
+
+        filtersContainer.addEventListener("click", (e) => {
+          const btn = e.target.closest("[data-med-cat]");
+          if (!btn) return;
+          activeCategory = btn.dataset.medCat;
+          renderFilterButtons();
+          renderCards();
+        });
+
+        renderFilterButtons();
+        renderCards();
+      }
+
+      /* 5. Render Expandable My Cat Gallery & Lightbox */
+      function renderCatGallery() {
+        const grid = document.getElementById("cat-gallery-grid");
+        const expandBtn = document.getElementById("cat-expand-btn");
+        const expandLabel = document.getElementById("cat-expand-label");
+        const expandIcon = document.getElementById("cat-expand-icon");
+
+        const lightbox = document.getElementById("cat-lightbox");
+        const lightboxImg = document.getElementById("lightbox-img");
+        const lightboxCaption = document.getElementById("lightbox-caption");
+        const lightboxCounter = document.getElementById("lightbox-counter");
+        const closeBtn = document.getElementById("lightbox-close");
+        const prevBtn = document.getElementById("lightbox-prev");
+        const nextBtn = document.getElementById("lightbox-next");
+
+        let isExpanded = false;
+        let currentIndex = 0;
+        const initialCount = 3;
+
+        function renderGridItems() {
+          const visiblePhotos = isExpanded
+            ? SITE_CONFIG.catGallery
+            : SITE_CONFIG.catGallery.slice(0, initialCount);
+
+          grid.innerHTML = visiblePhotos
+            .map(
+              (photo, index) => `
+                <button
+                  type="button"
+                  data-cat-idx="${index}"
+                  class="botanical-card rounded-3xl p-3 text-left group overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-rosePetal-400"
+                >
+                  <div class="relative aspect-[4/3] rounded-2xl overflow-hidden bg-rosePetal-100">
+                    <img
+                      src="${escapeHtml(photo.url)}"
+                      alt="${escapeHtml(photo.caption)}"
+                      onerror="this.onerror=null;this.src='https://placehold.co/800x600/f8e1e4/8f4352?text=Cute+Cat+Photo';"
+                      class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div class="absolute inset-0 bg-rosePetal-950/0 group-hover:bg-rosePetal-950/20 transition-colors flex items-center justify-center">
+                      <span class="opacity-0 group-hover:opacity-100 transition-opacity px-3.5 py-1.5 rounded-full bg-white/90 text-rosePetal-900 text-xs font-medium shadow">
+                        View Photo
+                      </span>
+                    </div>
+                  </div>
+                  <p class="font-serif text-lg text-rosePetal-900 mt-3 px-1 leading-snug">
+                    ${escapeHtml(photo.caption)}
+                  </p>
+                </button>
+              `
+            )
+            .join("");
+
+          if (SITE_CONFIG.catGallery.length <= initialCount) {
+            expandBtn.classList.add("hidden");
+          } else {
+            expandBtn.classList.remove("hidden");
+            expandLabel.textContent = isExpanded ? "Show Fewer Moments" : `Show More Moments (${SITE_CONFIG.catGallery.length - initialCount} more)`;
+            expandBtn.setAttribute("aria-expanded", String(isExpanded));
+            expandIcon.style.transform = isExpanded ? "rotate(180deg)" : "rotate(0deg)";
+          }
+        }
+
+        function openLightbox(index) {
+          currentIndex = (index + SITE_CONFIG.catGallery.length) % SITE_CONFIG.catGallery.length;
+          const item = SITE_CONFIG.catGallery[currentIndex];
+          lightboxImg.src = item.url;
+          lightboxImg.alt = item.caption;
+          lightboxCaption.textContent = item.caption;
+          lightboxCounter.textContent = `${currentIndex + 1} of ${SITE_CONFIG.catGallery.length}`;
+          lightbox.classList.remove("hidden");
+          document.body.style.overflow = "hidden";
+          closeBtn.focus();
+        }
+
+        function closeLightbox() {
+          lightbox.classList.add("hidden");
+          document.body.style.overflow = "";
+        }
+
+        expandBtn.addEventListener("click", () => {
+          isExpanded = !isExpanded;
+          renderGridItems();
+        });
+
+        grid.addEventListener("click", (e) => {
+          const card = e.target.closest("[data-cat-idx]");
+          if (!card) return;
+          openLightbox(Number(card.dataset.catIdx));
+        });
+
+        prevBtn.addEventListener("click", () => openLightbox(currentIndex - 1));
+        nextBtn.addEventListener("click", () => openLightbox(currentIndex + 1));
+        closeBtn.addEventListener("click", closeLightbox);
+
+        lightbox.addEventListener("click", (e) => {
+          if (e.target === lightbox) closeLightbox();
+        });
+
+        document.addEventListener("keydown", (e) => {
+          if (lightbox.classList.contains("hidden")) return;
+          if (e.key === "Escape") closeLightbox();
+          if (e.key === "ArrowLeft") openLightbox(currentIndex - 1);
+          if (e.key === "ArrowRight") openLightbox(currentIndex + 1);
+        });
+
+        renderGridItems();
+      }
+
+      function initAll() {
+        renderAbout();
+        renderMusic();
+        renderGames();
+        renderMedicalSpace();
+        renderCatGallery();
+      }
+
+      return { initAll };
+    })();
+
+    /**
+     * ==========================================================================
+     * MODULE 4: NAVIGATION, ACTIVE SECTION HIGHLIGHT & SCROLL REVEAL
+     * ==========================================================================
+     */
+    const ScrollObserver = (() => {
+      const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+      const iconOpen = document.getElementById("menu-icon-open");
+      const iconClose = document.getElementById("menu-icon-close");
+
+      function toggleMobileMenu(forceState) {
+        const isOpen = typeof forceState === "boolean"
+          ? forceState
+          : mobileMenu.classList.contains("hidden");
+
+        mobileMenu.classList.toggle("hidden", !isOpen);
+        iconOpen.classList.toggle("hidden", isOpen);
+        iconClose.classList.toggle("hidden", !isOpen);
+        mobileMenuBtn.setAttribute("aria-expanded", String(isOpen));
+      }
+
+      function initNavigation() {
+        mobileMenuBtn.addEventListener("click", () => toggleMobileMenu());
+
+        document.querySelectorAll(".mobile-nav-link").forEach((link) => {
+          link.addEventListener("click", () => toggleMobileMenu(false));
+        });
+
+        // Highlight active section in sticky navbar
+        const sectionIds = ["about", "music", "games", "medical", "cat"];
+        const navLinks = document.querySelectorAll("[data-nav-link]");
+
+        const sectionObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const id = entry.target.id;
+                navLinks.forEach((link) => {
+                  const isMatch = link.dataset.navLink === id;
+                  link.classList.toggle("bg-rosePetal-200/75", isMatch);
+                  link.classList.toggle("text-rosePetal-950", isMatch);
+                  link.classList.toggle("font-semibold", isMatch);
+                });
+              }
+            });
+          },
+          { rootMargin: "-25% 0px -55% 0px", threshold: 0.05 }
+        );
+
+        sectionIds.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) sectionObserver.observe(el);
+        });
+      }
+
+      function observeAll() {
+        const revealObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("in-view");
+                revealObserver.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.08 }
+        );
+
+        document.querySelectorAll(".reveal-section").forEach((sec) => {
+          revealObserver.observe(sec);
+        });
+      }
+
+      return { initNavigation, observeAll };
+    })();
+
+    /**
+     * ==========================================================================
+     * MODULE 5: UNLISTED SECRET TELEGRAM NOTE INTEGRATION
+     * ==========================================================================
+     * Backend Integration Guide:
+     * To forward messages privately to your Telegram account without exposing your
+     * Bot Token in client-side source code, create a tiny serverless endpoint
+     * (e.g., Cloudflare Worker) that accepts POST JSON `{ sender, message, timestamp }`
+     * and calls `https://api.telegram.org/bot<TOKEN>/sendMessage` with your `chat_id`.
+     * Then set `SITE_CONFIG.telegramEndpoint` to your Worker URL.
+     */
+    const SecretTelegramNote = (() => {
+      const form = document.getElementById("telegram-note-form");
+      const nameInput = document.getElementById("sender-name");
+      const messageInput = document.getElementById("sender-message");
+      const charCounter = document.getElementById("char-counter");
+      const feedbackEl = document.getElementById("telegram-feedback");
+      const submitBtn = document.getElementById("telegram-submit-btn");
+      const btnText = document.getElementById("telegram-btn-text");
+
+      function showFeedback(type, text) {
+        feedbackEl.classList.remove(
+          "hidden",
+          "bg-sageLeaf-100",
+          "text-sageLeaf-900",
+          "border-sageLeaf-300",
+          "bg-rosePetal-100",
+          "text-rosePetal-900",
+          "border-rosePetal-300"
+        );
+
+        if (type === "success") {
+          feedbackEl.classList.add("bg-sageLeaf-100", "text-sageLeaf-900", "border", "border-sageLeaf-300");
+        } else {
+          feedbackEl.classList.add("bg-rosePetal-100", "text-rosePetal-900", "border", "border-rosePetal-300");
+        }
+        feedbackEl.textContent = text;
+      }
+
+      async function sendTelegramMessage(payload) {
+        const endpoint = (SITE_CONFIG.telegramEndpoint || "").trim();
+
+        // If no backend proxy URL is configured yet, simulate delivery cleanly
+        if (!endpoint) {
+          await new Promise((resolve) => setTimeout(resolve, 850));
+          return {
+            ok: true,
+            demoMode: true
+          };
+        }
+
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error(`Server responded with status ${response.status}`);
+        }
+
+        return { ok: true, demoMode: false };
+      }
+
+      function init() {
+        messageInput.addEventListener("input", () => {
+          charCounter.textContent = `${messageInput.value.length} / 1000`;
+        });
+
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const rawMessage = messageInput.value.trim();
+          const rawName = nameInput.value.trim() || "Anonymous Visitor";
+
+          if (!rawMessage) {
+            showFeedback("error", "Please write a brief message before folding your note.");
+            messageInput.focus();
+            return;
+          }
+
+          submitBtn.disabled = true;
+          btnText.textContent = "Folding & Sending...";
+
+          try {
+            const result = await sendTelegramMessage({
+              sender: rawName,
+              message: rawMessage,
+              source: "A Little World",
+              timestamp: new Date().toISOString()
+            });
+
+            form.reset();
+            charCounter.textContent = "0 / 1000";
+
+            if (result.demoMode) {
+              showFeedback(
+                "success",
+                "Your note was sealed in preview mode! (Connect your serverless Telegram proxy URL in SITE_CONFIG.telegramEndpoint to deliver live messages.)"
+              );
+            } else {
+              showFeedback(
+                "success",
+                "Your whispered note has been delivered safely to Telegram. Thank you for visiting."
+              );
+            }
+          } catch (err) {
+            console.error("Telegram delivery error:", err);
+            showFeedback(
+              "error",
+              "The carrier dove hit a gentle breeze and could not send your note right now. Please try again shortly."
+            );
+          } finally {
+            submitBtn.disabled = false;
+            btnText.textContent = "Send Note via Telegram";
+          }
+        });
+      }
+
+      return { init };
+    })();
+
+    /**
+     * ==========================================================================
+     * INITIALIZE APPLICATION ON WINDOW LOAD
+     * ==========================================================================
+     */
+    window.addEventListener("DOMContentLoaded", () => {
+      MeadowBackground.start();
+      IntroPortal.init();
+      ContentRenderer.initAll();
+      ScrollObserver.initNavigation();
+      SecretTelegramNote.init();
+    });
+  </script>
+</body>
+</html>
